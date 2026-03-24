@@ -8,7 +8,7 @@ AxonML is a machine learning framework designed for efficient and scalable model
 See [Wiki Page](https://github.com/TheDiscProg/axon-ml/wiki)
 
 ## TODO
-1. Lazy Evaluation: Implement lazy evaluation for the Thunk type, allowing for more efficient computation of matrix operations, especially for large matrices.
+1. *DONE* - Lazy Evaluation: Implement lazy evaluation for the Thunk type, allowing for more efficient computation of matrix operations, especially for large matrices.
 2. Parallel Processing: Provide support for parallel processing of matrix operations, leveraging Scala's concurrency features (e.g., Futures, Akka Actors) to improve performance on multi-core systems.
 3. Specialized Matrix Implementations: Introduce specialized matrix implementations, such as sparse matrices or diagonal matrices, to optimize memory usage and performance for specific use cases.
 4. Eigendecomposition and SVD: Add support for eigendecomposition and singular value decomposition (SVD) of matrices, which are essential for many machine learning and data analysis techniques.

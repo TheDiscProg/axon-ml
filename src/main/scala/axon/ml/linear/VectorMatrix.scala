@@ -1,12 +1,12 @@
 package axon.ml.linear
 
-import axon.ml.dsl.{Functor, Id, NumericDSL}
+import axon.ml.dsl.{Functor, Id, NumericDSL, Thunk, ThunkDSL}
 
 class VectorMatrix[F[_], N](
     val data: Vector[Vector[F[N]]]
 )(implicit val F: Functor[F], val N: Numeric[N])
     extends Matrix[Vector, F, N] {
-  def baseData = data
+  def baseData: Vector[Vector[F[N]]] = data
 
   override def rows: Long =
     data.length.toLong
@@ -126,7 +126,14 @@ object VectorMatrix {
   import Functor._
 
   implicitly[Numeric[Double]]
+  implicitly[Numeric[BigDecimal]]
 
   def fromDoubleVector(data: Vector[Vector[Double]]) =
     new VectorMatrix[Id, Double](data)
+
+  def fromBigDecimalVector(data: Vector[Vector[BigDecimal]]) =
+    new VectorMatrix[Id, BigDecimal](data)
+
+  def liftThunk[N](data: Vector[Vector[N]])(implicit N: Numeric[N]) =
+    new VectorMatrix[Thunk, N](ThunkDSL.liftThunk[N](data))
 }
