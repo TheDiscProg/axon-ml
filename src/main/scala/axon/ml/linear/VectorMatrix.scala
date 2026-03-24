@@ -128,12 +128,12 @@ object VectorMatrix {
   implicitly[Numeric[Double]]
   implicitly[Numeric[BigDecimal]]
 
-  def fromDoubleVector(data: Vector[Vector[Double]]) =
+  def fromDoubleVector(data: Vector[Vector[Double]]): Matrix[Vector, Id, Double] =
     new VectorMatrix[Id, Double](data)
 
-  def fromBigDecimalVector(data: Vector[Vector[BigDecimal]]) =
+  def fromBigDecimalVector(data: Vector[Vector[BigDecimal]]): Matrix[Vector, Id, BigDecimal] =
     new VectorMatrix[Id, BigDecimal](data)
 
-  def liftThunk[N](data: Vector[Vector[N]])(implicit N: Numeric[N]) =
+  def liftThunk[N](data: Vector[Vector[N]])(implicit N: Numeric[N]): Matrix[Vector, Thunk, N] =
     new VectorMatrix[Thunk, N](ThunkDSL.liftThunk[N](data))
 }

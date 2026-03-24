@@ -200,7 +200,7 @@ class VectorMatrixTest extends AnyFunSpec with Matchers {
 
   describe("Matrix using Thunks") {
     val m1 = VectorMatrix.liftThunk[Double](Vector(Vector(1.1, 2.3, 3.3), Vector(4, 5, 6)))
-    val m2 = VectorMatrix.liftThunk[Double](Vector(Vector(4.4, 5.01, 6.02), Vector(7, 8, 9)))
+    val m2 = VectorMatrix.liftThunk[Double](Vector(Vector(4.4, 5.01), Vector(7, 8), Vector(9, 10)))
 
     it("should give basic properties of a vector matrix using Thunks") {
       m1.rows shouldEqual 2
@@ -217,6 +217,16 @@ class VectorMatrixTest extends AnyFunSpec with Matchers {
       ThunkDSL.execute(t.baseData) should be(Vector(Vector(1.1, 4), Vector(2.3, 5), Vector(3.3, 6)))
     }
 
+    it("should do a dot product lazily") {
+      val result = m1.dot(m2)
+
+      ThunkDSL
+        .execute(result.baseData)
+        .map(v => v.map(d => BigDecimal(d).setScale(4, BigDecimal.RoundingMode.HALF_UP))) should be(
+        Vector(Vector(50.64, 56.911), Vector(106.6, 120.04))
+      )
+    }
+
     it("should show laziness") {
       var counter = 0
       def tracked(n: Double): Thunk[Double] = () => {
@@ -228,7 +238,7 @@ class VectorMatrixTest extends AnyFunSpec with Matchers {
       val scaled = m.scale(2.0)
 
       assert(counter == 0)
-      scaled.get(1, 1)()
+      scaled.get(1, 1)() shouldEqual 2.2
       assert(counter == 1)
     }
   }
