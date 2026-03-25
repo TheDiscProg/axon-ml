@@ -15,7 +15,7 @@ trait NumericDSL[F[_]] {
 
 object NumericDSL {
 
-  implicit val idNumericDSL: NumericDSL[Id] = new NumericDSL[Id] {
+  implicit val idDSL: NumericDSL[Id] = new NumericDSL[Id] {
     override def const[N](n: N): Id[N] = n
 
     override def add[N](a: Id[N], b: Id[N])(implicit N: Numeric[N]): Id[N] =
@@ -30,4 +30,23 @@ object NumericDSL {
     override def divide[N](a: Id[N], b: Id[N])(implicit N: Fractional[N]): Id[N] =
       implicitly[Fractional[N]].div(a, b)
   }
+
+  implicit def funcDSL[X]: NumericDSL[({ type F[A] = X => A })#F] =
+    new NumericDSL[({ type F[A] = X => A })#F] {
+
+      def const[N](n: N): X => N =
+        _ => n
+
+      def add[N: Numeric](a: X => N, b: X => N): X => N =
+        x => implicitly[Numeric[N]].plus(a(x), b(x))
+
+      def subtract[N: Numeric](a: X => N, b: X => N): X => N =
+        x => implicitly[Numeric[N]].minus(a(x), b(x))
+
+      def multiply[N: Numeric](a: X => N, b: X => N): X => N =
+        x => implicitly[Numeric[N]].times(a(x), b(x))
+
+      def divide[N: Fractional](a: X => N, b: X => N): X => N =
+        x => implicitly[Fractional[N]].div(a(x), b(x))
+    }
 }

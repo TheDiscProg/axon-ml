@@ -1,6 +1,6 @@
 package axon.ml.linear
 
-import axon.ml.dsl.{Functor, Id, NumericDSL, Thunk, ThunkDSL}
+import axon.ml.dsl._
 
 class VectorMatrix[F[_], N](
     val data: Vector[Vector[F[N]]]
@@ -119,7 +119,6 @@ class VectorMatrix[F[_], N](
       dsl.add(acc, sq)
     }
   }
-
 }
 
 object VectorMatrix {
@@ -136,4 +135,10 @@ object VectorMatrix {
 
   def liftThunk[N](data: Vector[Vector[N]])(implicit N: Numeric[N]): Matrix[Vector, Thunk, N] =
     new VectorMatrix[Thunk, N](ThunkDSL.liftThunk[N](data))
+
+  def fromFunctionVectors[X, A](functions: Vector[Vector[X => A]])(implicit
+      F: Functor[({ type F[T] = X => T })#F],
+      N: Numeric[A]
+  ): VectorMatrix[({ type F[T] = X => T })#F, A] =
+    new VectorMatrix[({ type F[T] = X => T })#F, A](functions)
 }

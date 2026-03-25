@@ -243,4 +243,32 @@ class VectorMatrixTest extends AnyFunSpec with Matchers {
     }
   }
 
+  describe("Matrix using Functors") {
+
+    val f1 = (x: Double) => x + 1
+    val f2 = (x: Double) => x * 2
+    val f3 = (x: Double) => x - 3
+    val f4 = (x: Double) => x * x
+
+    val functions: Vector[Vector[Double => Double]] = Vector(
+      Vector(f1, f2),
+      Vector(f3, f4)
+    )
+    val matrix = VectorMatrix.fromFunctionVectors(functions)
+
+    it("should scale a matrix using a function") {
+      val scaled = matrix.scale(2.0)
+      val input = 5.0
+
+      val result =
+        (0 until (scaled.rows.toInt)).map { r =>
+          (0 until (scaled.columns.toInt)).map { c =>
+            scaled.get(r + 1, c + 1)(input)
+          }.toVector
+        }.toVector
+
+      assert(result == Vector(Vector(12.0, 20.0), Vector(4.0, 50.0)))
+    }
+  }
+
 }

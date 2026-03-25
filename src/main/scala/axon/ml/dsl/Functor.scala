@@ -17,4 +17,10 @@ object Functor {
   implicit def vectorFunctor: Functor[Vector] = new Functor[Vector] {
     override def map[A, B](fa: Vector[A])(f: A => B): Vector[B] = fa.map(f)
   }
+
+  implicit def funcFunctor[X]: Functor[({ type F[A] = X => A })#F] =
+    new Functor[({ type F[A] = X => A })#F] {
+      def map[A, B](fa: X => A)(f: A => B): X => B =
+        x => f(fa(x))
+    }
 }
